@@ -175,7 +175,7 @@ typing-extensions = ">=4.0.0"
 name = "attrs"
 version = "23.1.0"
 description = "Classes Without Boilerplate"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -795,6 +795,24 @@ files = [
 ]
 
 [[package]]
+name = "deprecated"
+version = "1.2.13"
+description = "Python @deprecated decorator to deprecate old python classes, functions or methods."
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+files = [
+    {file = "Deprecated-1.2.13-py2.py3-none-any.whl", hash = "sha256:64756e3e14c8c5eea9795d93c524551432a0be75629f8f29e67ab8caf076c76d"},
+    {file = "Deprecated-1.2.13.tar.gz", hash = "sha256:43ac5335da90c31c24ba028af536a91d41d53f9e6901ddb021bcc572ce44e38d"},
+]
+
+[package.dependencies]
+wrapt = ">=1.10,<2"
+
+[package.extras]
+dev = ["PyTest", "PyTest (<5)", "PyTest-Cov", "PyTest-Cov (<2.6)", "bump2version (<1)", "configparser (<5)", "importlib-metadata (<3)", "importlib-resources (<4)", "sphinx (<2)", "sphinxcontrib-websupport (<2)", "tox", "zipp (<2)"]
+
+[[package]]
 name = "distlib"
 version = "0.3.6"
 description = "Distribution utilities"
@@ -1018,6 +1036,23 @@ files = [
     {file = "gprof2dot-2022.7.29-py2.py3-none-any.whl", hash = "sha256:f165b3851d3c52ee4915eb1bd6cca571e5759823c2cd0f71a79bda93c2dc85d6"},
     {file = "gprof2dot-2022.7.29.tar.gz", hash = "sha256:45b4d298bd36608fccf9511c3fd88a773f7a1abc04d6cd39445b11ba43133ec5"},
 ]
+
+[[package]]
+name = "hepunits"
+version = "2.3.2"
+description = "Units and constants in the HEP system of units"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "hepunits-2.3.2-py3-none-any.whl", hash = "sha256:96267ca79908b8d3c44bd09c3ad98887a7394118d9495657c2471b8e2264d759"},
+    {file = "hepunits-2.3.2.tar.gz", hash = "sha256:8a3366fa5d72c16af1166ed579cdaa81edd2676acb8f6a1fe7da290cefca3b08"},
+]
+
+[package.extras]
+all = ["pytest (>=6)", "pytest-cov (>=2.8.0)"]
+dev = ["pytest (>=6)", "pytest-cov (>=2.8.0)"]
+test = ["pytest (>=6)", "pytest-cov (>=2.8.0)"]
 
 [[package]]
 name = "html5lib"
@@ -2664,6 +2699,28 @@ files = [
 [package.extras]
 qa = ["flake8 (==3.8.3)", "mypy (==0.782)"]
 testing = ["docopt", "pytest (<6.0.0)"]
+
+[[package]]
+name = "particle"
+version = "0.22.0"
+description = "Extended PDG particle data and MC identification codes"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "particle-0.22.0-py3-none-any.whl", hash = "sha256:b2bb8b4579372c5a8f5340dd98b72a1f95dfa3a41d41c3cd98ec2549370d474a"},
+    {file = "particle-0.22.0.tar.gz", hash = "sha256:567bb3017cb7526f9c9ef4399e9ba5acbdb5b9ce93eb18e4da6479d3181c93a5"},
+]
+
+[package.dependencies]
+attrs = ">=19.2"
+deprecated = "*"
+hepunits = ">=2.0.0"
+importlib-resources = {version = ">=2.0", markers = "python_version < \"3.9\""}
+
+[package.extras]
+dev = ["pandas", "pytest (>=6)", "pytest-benchmark", "tabulate"]
+test = ["pandas", "pytest (>=6)", "pytest-benchmark", "pytest-cov", "tabulate"]
 
 [[package]]
 name = "pexpect"
@@ -4422,7 +4479,7 @@ files = [
 name = "wrapt"
 version = "1.15.0"
 description = "Module for decorators, wrappers and monkey patching."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 files = [
@@ -4607,4 +4664,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "3724228af5d2cdf28d244d0398dbcf01bc7f9f2ec8b5296eee0894b0948af3f9"
+content-hash = "ca5e677bbeaad542ddb6f4b8a596fcfabe87138a6d76534f6d096a3e2f498406"

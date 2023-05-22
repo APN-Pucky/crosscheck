@@ -1,4 +1,4 @@
-# crosscheck
+# CROSSsection CHECKer
 crosscheck matrix elements against MadGraph, OpenLoops and Recola2
 
 
