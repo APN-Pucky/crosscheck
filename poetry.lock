@@ -2991,18 +2991,18 @@ files = [
 
 [[package]]
 name = "poetry-dynamic-versioning"
-version = "0.21.5"
+version = "0.22.0"
 description = "Plugin for Poetry to enable dynamic versioning based on VCS tags"
 category = "dev"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "poetry_dynamic_versioning-0.21.5-py3-none-any.whl", hash = "sha256:4f299e4bfe780e0dd85e8e9ed3ddfa42d050447a36ac8f5e8c1ebd66f66c82cc"},
-    {file = "poetry_dynamic_versioning-0.21.5.tar.gz", hash = "sha256:aa3ff2883394daf80d0cfb1e12d10ecdedc407a8b7c296545ad8b6124979dffc"},
+    {file = "poetry_dynamic_versioning-0.22.0-py3-none-any.whl", hash = "sha256:4864371c930e5d9a8144a9457c5a49c32cc44efd2370242721cb0240e8a9bf0e"},
+    {file = "poetry_dynamic_versioning-0.22.0.tar.gz", hash = "sha256:f148b77337821a8e1c24a78ad98326d2189da0b84b76572b8d011fc4218e9ac1"},
 ]
 
 [package.dependencies]
-dunamai = ">=1.16.0,<2.0.0"
+dunamai = ">=1.17.0,<2.0.0"
 jinja2 = ">=2.11.1,<4"
 poetry = {version = ">=1.2.0,<2.0.0", optional = true, markers = "extra == \"plugin\""}
 tomlkit = ">=0.4"
@@ -4664,4 +4664,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "ca5e677bbeaad542ddb6f4b8a596fcfabe87138a6d76534f6d096a3e2f498406"
+content-hash = "3955e5f765a2b82963b32949d520589f21f5b1629822e3c26c97dfcf4a1c5467"
