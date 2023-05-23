@@ -72,8 +72,12 @@ def compute(in_df):
         finite = re.search(r"finite\s*=\s*(.*)GeV", output).group(1)
         single = re.search(r"1eps\s*=\s*(.*)GeV", output).group(1)
         double = re.search(r"2eps\s*=\s*(.*)GeV", output).group(1)
+        alphas = re.search(r"aS\s*=\s*(.*)", output).group(1)
+        alpha1 = re.search(r"aEWM1\s*=\s*(.*)", output).group(1)
         in_df.loc[i,('Born',)] = float(born)
         in_df.loc[i,('Finite',)] = float(finite)
         in_df.loc[i,('Single Pole',)] = float(single)
         in_df.loc[i,('Double Pole',)] = float(double)
+        in_df.loc[i,('alphas',)] = float(alphas)
+        in_df.loc[i,('alpha',)] = 1/float(alpha1)
     return in_df

@@ -1,4 +1,4 @@
-from pyrecola import define_process_rcl,generate_processes_rcl,compute_process_rcl
+from pyrecola import define_process_rcl,generate_processes_rcl,compute_process_rcl, get_alphas_rcl, get_alpha_rcl
 from particle import Particle
 import warnings
 
@@ -52,6 +52,8 @@ def compute(in_df,order='NLO'):
         in_df.loc[i,('A0',)] = A0
         in_df.loc[i,('A1',)] = A1
         in_df.loc[i,('A2',)] = A2
+        in_df.loc[i,('alphas',)] = get_alphas_rcl()
+        in_df.loc[i,('alpha',)] = get_alpha_rcl()
     return in_df
 
 
