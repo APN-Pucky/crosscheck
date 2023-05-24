@@ -3,6 +3,7 @@ from particle import Particle
 import warnings
 import glob
 import re
+import tqdm
 from smpl_io import io as sio
 from smpl_io import sed
 
@@ -12,9 +13,9 @@ def pdgid_to_name(id):
         return 'g'
     if id == 22:
         return 'A'
-    return Particle.from_pdgid(id).programmatic_name
+    return Particle.from_pdgid(id).programmatic_name.replace("_bar","~")
 
-def compute(in_df):
+def compute(in_df,debug=False):
     global_diags = []
     procs = []
     # separate same flavour diagrams 
@@ -23,10 +24,11 @@ def compute(in_df):
     out_cols = sorted([col for col in in_df.columns if str(col).startswith('out_')])
     if len(in_cols) + len(out_cols) > 9: # TODO improve this
         warnings.warn('More than 9 particles, this is not supported')
-    for i,row in in_df.iterrows():
+    for i,row in tqdm.tqdm(in_df.iterrows(),desc="Generating processes in madgraph.py",total=in_df.shape[0]):
         # get the ids of the particles
         in_ids = [row[col] for col in in_cols]
         out_ids = [row[col] for col in out_cols]
+        mu_r = row['mu_r']
         # do not append to global_diags if it is already there
         if not (*in_ids, *out_ids) in global_diags:
             global_diags.append((*in_ids, *out_ids))
@@ -35,10 +37,13 @@ def compute(in_df):
             genstr += "generate" + " " + " ".join([pdgid_to_name(p) for p in in_ids]) + " > " + " ".join([pdgid_to_name(p) for p in out_ids]) + " [virt=QCD]\n"
             genstr += f"output /tmp/output_{cid}\n"
             genstr += "launch\n"
-            print("Defining process: ", genstr, " with id: ", cid, " in madgraph.py")
+            genstr += "set mass mb 0.0\n"
+            genstr += f"set mu_r {mu_r}\n"
+            if debug:
+                print("Defining process: ", genstr, " with id: ", cid, " in madgraph.py")
             with open(f"/tmp/mg_{cid}", "w") as f:
                 f.write(genstr)
-            procs.append(subprocess.Popen(["/opt/original_MG/MG5_aMC_v3_5_0/bin/mg5_aMC", f"/tmp/mg_{cid}"]))
+            procs.append(subprocess.Popen(["/opt/original_MG/MG5_aMC_v3_5_0/bin/mg5_aMC", f"/tmp/mg_{cid}"],stdout=subprocess.DEVNULL if not debug else subprocess.STDOUT))
     # wait for all processes to finish
     for proc in procs:
         proc.wait()
@@ -47,7 +52,7 @@ def compute(in_df):
         fn = glob.glob(f"/tmp/output_{cid}/SubProcesses/P*/check_sa.f")[0]
         sio.write(fn,sed.sed("READPS = .FALSE.", "READPS = .TRUE.",fn).read())
         fm = glob.glob(f"/tmp/output_{cid}/SubProcesses/P*/")[0]
-        procs.append(subprocess.Popen(["make", "-C", fm, "check"]))
+        procs.append(subprocess.Popen(["make", "-C", fm, "check"],stdout=subprocess.DEVNULL if not debug else subprocess.STDOUT))
     for proc in procs:
         proc.wait()
 
@@ -57,7 +62,7 @@ def compute(in_df):
     in_df['Single Pole'] = 0.0
     in_df['Double Pole'] = 0.0
 
-    for i,row in in_df.iterrows():
+    for i,row in tqdm.tqdm(in_df.iterrows(),desc="Computing processes in madgraph.py",total=in_df.shape[0]):
         in_ids = row[in_cols]
         out_ids = row[out_cols]
         cid = global_diags.index((*in_ids, *out_ids))
@@ -67,7 +72,8 @@ def compute(in_df):
             for ps in psp:
                 print(*ps, file=f)
         output = subprocess.check_output([glob.glob(f"/tmp/output_{cid}/SubProcesses/P*/check")[0]], cwd=glob.glob(f"/tmp/output_{cid}/SubProcesses/P*/")[0]).decode('utf-8')
-        print(output)
+        if debug:
+            print(output)
         born = re.search(r"born\s*=\s*(.*)GeV", output).group(1)
         finite = re.search(r"finite\s*=\s*(.*)GeV", output).group(1)
         single = re.search(r"1eps\s*=\s*(.*)GeV", output).group(1)
@@ -75,6 +81,7 @@ def compute(in_df):
         alphas = re.search(r"aS\s*=\s*(.*)", output).group(1)
         alpha1 = re.search(r"aEWM1\s*=\s*(.*)", output).group(1)
         in_df.loc[i,('Born',)] = float(born)
+        in_df.loc[i,('Virt',)] = float(finite)
         in_df.loc[i,('Finite',)] = float(finite)
         in_df.loc[i,('Single Pole',)] = float(single)
         in_df.loc[i,('Double Pole',)] = float(double)

@@ -100,3 +100,74 @@
  in routine: SetMuUV2_cll
  UV scale set to
     muUV2 = 0.100000000000000000D+05
+
+
+
+ ***********************************************************
+ Info-output NO.           7
+ in routine: InitCacheSystem_cll
+ cache system initialized
+ COLLIER-Cache:  1 caches initialized at level  5
+
+
+
+ ***********************************************************
+ Info-output NO.           8
+ in routine: SetCacheLevel_cll
+ cache level modified
+ COLLIER-Cache: level of cache no.           1 set to            5
+
+
+
+ ***********************************************************
+ Info-output NO.           9
+ in routine: SetMode_cll
+ mode_cll set to
+  1 --> use COLI implementation
+
+
+
+ ***********************************************************
+ Info-output NO.          10
+ in routine: SwitchOnTenRed_cll
+ direct tensor reduction switched on for N >= 6
+
+
+
+ ***********************************************************
+ Info-output NO.          11
+ in routine: clearminf2_cll
+ list of infinitesimal masses cleared
+
+
+
+ ***********************************************************
+ Info-output NO.          12
+ in routine: SetDeltaUV_cll
+ UV pole set to
+    deltaUV = 0.000000000000000000D+00
+
+
+
+ ***********************************************************
+ Info-output NO.          13
+ in routine: SetMuUV2_cll
+ UV scale set to
+    muUV2 = 0.100000000000000000D+05
+
+
+
+ ***********************************************************
+ Info-output NO.          14
+ in routine: SetDeltaIR_cll
+ IR single and double pole set to
+    deltaIR1 = 0.000000000000000000D+00
+    deltaIR2 = 0.000000000000000000D+00
+
+
+
+ ***********************************************************
+ Info-output NO.          15
+ in routine: SetMuIR2_cll
+ IR scale set to
+    muIR2 = 0.100000000000000000D+05
