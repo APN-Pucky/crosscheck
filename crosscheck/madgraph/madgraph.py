@@ -15,7 +15,7 @@ def pdgid_to_name(id):
         return 'A'
     return Particle.from_pdgid(id).programmatic_name.replace("_bar","~")
 
-def compute(in_df,debug=False):
+def compute(in_df,debug=False,n_jobs=-1):
     global_diags = []
     procs = []
     # separate same flavour diagrams 
@@ -28,7 +28,6 @@ def compute(in_df,debug=False):
         # get the ids of the particles
         in_ids = [row[col] for col in in_cols]
         out_ids = [row[col] for col in out_cols]
-        mu_r = row['mu_r']
         # do not append to global_diags if it is already there
         if not (*in_ids, *out_ids) in global_diags:
             global_diags.append((*in_ids, *out_ids))
@@ -38,12 +37,13 @@ def compute(in_df,debug=False):
             genstr += f"output /tmp/output_{cid}\n"
             genstr += "launch\n"
             genstr += "set mass mb 0.0\n"
-            genstr += f"set mu_r {mu_r}\n"
             if debug:
                 print("Defining process: ", genstr, " with id: ", cid, " in madgraph.py")
             with open(f"/tmp/mg_{cid}", "w") as f:
                 f.write(genstr)
-            procs.append(subprocess.Popen(["/opt/original_MG/MG5_aMC_v3_5_0/bin/mg5_aMC", f"/tmp/mg_{cid}"],stdout=subprocess.DEVNULL if not debug else subprocess.STDOUT))
+            if not n_jobs < 0 and len(procs) > n_jobs:
+                procs[len(procs)-n_jobs].wait()
+            procs.append(subprocess.Popen(["/opt/original_MG/MG5_aMC_v3_5_0/bin/mg5_aMC", f"/tmp/mg_{cid}"],stdout=subprocess.DEVNULL if not debug else None))
     # wait for all processes to finish
     for proc in procs:
         proc.wait()
@@ -52,7 +52,7 @@ def compute(in_df,debug=False):
         fn = glob.glob(f"/tmp/output_{cid}/SubProcesses/P*/check_sa.f")[0]
         sio.write(fn,sed.sed("READPS = .FALSE.", "READPS = .TRUE.",fn).read())
         fm = glob.glob(f"/tmp/output_{cid}/SubProcesses/P*/")[0]
-        procs.append(subprocess.Popen(["make", "-C", fm, "check"],stdout=subprocess.DEVNULL if not debug else subprocess.STDOUT))
+        procs.append(subprocess.Popen(["make", "-C", fm, "check"],stdout=subprocess.DEVNULL if not debug else None))
     for proc in procs:
         proc.wait()
 
@@ -65,12 +65,15 @@ def compute(in_df,debug=False):
     for i,row in tqdm.tqdm(in_df.iterrows(),desc="Computing processes in madgraph.py",total=in_df.shape[0]):
         in_ids = row[in_cols]
         out_ids = row[out_cols]
+        mu_r = row['mu_r']
         cid = global_diags.index((*in_ids, *out_ids))
         pn_cols = sorted([col for col in in_df.columns if str(col).startswith('p_')] )
         psp = row[pn_cols].to_numpy().astype(float).reshape((int(len(pn_cols)/4),4)).tolist()
         with open(glob.glob(f"/tmp/output_{cid}/SubProcesses/P*/")[0] + "PS.input",'w') as f:
             for ps in psp:
                 print(*ps, file=f)
+        fn = glob.glob(f"/tmp/output_{cid}/Cards/param_card.dat")[0]
+        sio.write(fn,sed.sed(".* # mu_r",f"      1 {mu_r} # mu_r",fn).read())
         output = subprocess.check_output([glob.glob(f"/tmp/output_{cid}/SubProcesses/P*/check")[0]], cwd=glob.glob(f"/tmp/output_{cid}/SubProcesses/P*/")[0]).decode('utf-8')
         if debug:
             print(output)
